@@ -1,7 +1,8 @@
 import dbus
 from typing import List, Any
+from py_modules.utils.di import bean
 
-
+@bean
 class PlatformClient:
     def __init__(self):
         self.bus = dbus.SystemBus()
@@ -11,13 +12,11 @@ class PlatformClient:
         self.proxy = self.bus.get_object(self.service_name, self.object_path)
 
     # Métodos de la interfaz
-    def supported_properties(self) -> List[str]:
-        """Obtiene la lista de propiedades soportadas."""
+    """def supported_properties(self) -> List[str]:
         method = self.proxy.get_dbus_method("SupportedProperties", self.interface_name)
         return method()
-
+    """
     def next_throttle_thermal_policy(self):
-        """Cambia al siguiente ThrottleThermalPolicy."""
         method = self.proxy.get_dbus_method("NextThrottleThermalPolicy", self.interface_name)
         method()
 
@@ -29,6 +28,15 @@ class PlatformClient:
         self.proxy.Set(self.interface_name, property_name, value, dbus_interface="org.freedesktop.DBus.Properties")
 
     # Propiedades
+    @property
+    def throttle_thermal_policy(self) -> int:
+        return self.get_property("ThrottleThermalPolicy")
+
+    @throttle_thermal_policy.setter
+    def throttle_thermal_policy(self, value: int):
+        self.set_property("ThrottleThermalPolicy", dbus.UInt32(value))
+        
+    """
     @property
     def boot_sound(self) -> bool:
         return self.get_property("BootSound")
@@ -52,7 +60,6 @@ class PlatformClient:
     @change_throttle_policy_on_battery.setter
     def change_throttle_policy_on_battery(self, value: bool):
         self.set_property("ChangeThrottlePolicyOnBattery", dbus.Boolean(value))
-
     @property
     def charge_control_end_threshold(self) -> int:
         return self.get_property("ChargeControlEndThreshold")
@@ -198,13 +205,6 @@ class PlatformClient:
         self.set_property("ThrottleQuietEpp", dbus.UInt32(value))
 
     @property
-    def throttle_thermal_policy(self) -> int:
-        return self.get_property("ThrottleThermalPolicy")
-
-    @throttle_thermal_policy.setter
-    def throttle_thermal_policy(self, value: int):
-        self.set_property("ThrottleThermalPolicy", dbus.UInt32(value))
-
-    @property
     def version(self) -> str:
         return self.get_property("Version")
+    """

@@ -1,6 +1,8 @@
 import dbus
 from py_modules.models.power_profile import PowerProfile
+from py_modules.utils.di import bean
 
+@bean
 class PowerProfilesClient:
     def __init__(self):
         self.bus = dbus.SystemBus()
@@ -26,25 +28,21 @@ class PowerProfilesClient:
     # Propiedades
     @property
     def active_profile(self) -> PowerProfile:
-        """Devuelve el perfil de energía actualmente activo."""
         return self.get_active_profile()
 
     @active_profile.setter
     def active_profile(self, profile: PowerProfile):
-        """Establece un nuevo perfil de energía como activo."""
         self.set_active_profile(profile)
-
+    """
     @property
     def balanced_available(self) -> bool:
-        """Devuelve si el perfil 'balanced' está disponible."""
         return self.proxy.Get(self.interface_name, "BalancedAvailable", dbus_interface=dbus.PROPERTIES_IFACE)
 
     @property
     def performance_available(self) -> bool:
-        """Devuelve si el perfil 'performance' está disponible."""
         return self.proxy.Get(self.interface_name, "PerformanceAvailable", dbus_interface=dbus.PROPERTIES_IFACE)
 
     @property
     def power_saver_available(self) -> bool:
-        """Devuelve si el perfil 'power-saver' está disponible."""
         return self.proxy.Get(self.interface_name, "PowerSaverAvailable", dbus_interface=dbus.PROPERTIES_IFACE)
+    """

@@ -1,5 +1,7 @@
-from py_modules.controllers.profile_controller import ProfileController
 from py_modules.controllers.aura_controller import AuraController
+from py_modules.controllers.profile_controller import ProfileController
+from py_modules.utils.constants import ICON_BASE_PATH
+
 import os
 
 import gi
@@ -7,8 +9,6 @@ gi.require_version("Gtk", "3.0")
 gi.require_version("AppIndicator3", "0.1")
 from gi.repository import AppIndicator3 as appindicator  # noqa: E402
 from gi.repository import GLib, Gtk  # noqa: E402
-
-ICON_BASE_PATH: str = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..")
 
 class TrayIcon:
     profile_controller = ProfileController()

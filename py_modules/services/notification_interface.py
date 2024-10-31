@@ -1,7 +1,7 @@
+from py_modules.utils.constants import ICON_PATH
+
 import dbus
 import os
-
-ICON: str = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..","rog-logo.svg")
 
 class NotificacionInterface:
     def send_notification(self, title, message):
@@ -13,7 +13,7 @@ class NotificacionInterface:
         notify.Notify(
             'AsusTray',  # Identificador de la aplicación
             0,                # ID de la notificación (0 si no se quiere un ID)
-            ICON,               # Icono (puedes poner un icono aquí o dejarlo vacío)
+            ICON_PATH,               # Icono (puedes poner un icono aquí o dejarlo vacío)
             title,           # Título de la notificación
             message,         # Mensaje de la notificación
             [],              # Acciones

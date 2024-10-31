@@ -1,13 +1,14 @@
 import dbus
 from typing import List, Tuple, Any
 from py_modules.models.throttle_thermal_policy import ThrottleThermalPolicy
+from py_modules.utils.di import bean
 
-# Define a class to represent the fan curve data
 class FanCurveData:
     def __init__(self, name: str, data: Tuple[Tuple[int, int], Tuple[int, int], bool]):
         self.name = name
         self.data = data
 
+@bean
 class FanCurvesClient:
     def __init__(self):
         self.bus = dbus.SystemBus()
@@ -20,8 +21,16 @@ class FanCurvesClient:
     def set_fan_curves_enabled(self, profile: ThrottleThermalPolicy, enabled: bool):
         method = self.proxy.get_dbus_method("SetFanCurvesEnabled", self.interface_name)
         method(profile.value, enabled)
+    
+    def set_curves_to_defaults(self, profile: ThrottleThermalPolicy):
+        method = self.proxy.get_dbus_method("SetCurvesToDefaults", self.interface_name)
+        method(profile.value)
 
-    def set_profile_fan_curve_enabled(self, profile: ThrottleThermalPolicy, fan: str, enabled: bool):
+    def reset_profile_curves(self, profile: ThrottleThermalPolicy):
+        method = self.proxy.get_dbus_method("ResetProfileCurves", self.interface_name)
+        method(profile.value)
+
+    """def set_profile_fan_curve_enabled(self, profile: ThrottleThermalPolicy, fan: str, enabled: bool):
         method = self.proxy.get_dbus_method("SetProfileFanCurveEnabled", self.interface_name)
         method(profile.value, fan, enabled)
 
@@ -34,13 +43,4 @@ class FanCurvesClient:
     def set_fan_curve(self, profile: ThrottleThermalPolicy, curve: FanCurveData):
         method = self.proxy.get_dbus_method("SetFanCurve", self.interface_name)
         method(profile.value, curve.data)
-
-    def set_curves_to_defaults(self, profile: ThrottleThermalPolicy):
-        method = self.proxy.get_dbus_method("SetCurvesToDefaults", self.interface_name)
-        method(profile.value)
-
-    def reset_profile_curves(self, profile: ThrottleThermalPolicy):
-        method = self.proxy.get_dbus_method("ResetProfileCurves", self.interface_name)
-        method(profile.value)
-
-    # Propiedades (si se requieren, puedes agregar aquí)
+    """

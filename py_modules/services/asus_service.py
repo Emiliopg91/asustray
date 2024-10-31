@@ -7,10 +7,12 @@ from py_modules.models.aura_mode import AuraMode
 from py_modules.models.power_profile import PowerProfile
 from py_modules.models.throttle_thermal_policy import ThrottleThermalPolicy
 from py_modules.services.notification_interface import NotificacionInterface
+from py_modules.utils.constants import LAST_PROFILE
+from py_modules.utils.di import inject, bean
+from py_modules.utils.logger import Logger
+
 
 import os
-
-
 
 policy_profile_asoc = {
     ThrottleThermalPolicy.QUIET: PowerProfile.POWER_SAVER,
@@ -18,12 +20,14 @@ policy_profile_asoc = {
     ThrottleThermalPolicy.PERFORMANCE: PowerProfile.PERFORMANCE
 }
 
+@bean
+@inject
 class AsusService:
-    def __init__(self):
-        self.fan_curves = FanCurvesClient()
-        self.platform = PlatformClient()
-        self.power = PowerProfilesClient()
-        self.aura = AuraClient()
+    fan_curves: FanCurvesClient
+    platform: PlatformClient
+    power: PowerProfilesClient
+    aura: AuraClient
+    logger: Logger
 
     def get_aura_mode(self) -> AuraMode:
         return self.aura.led_mode
@@ -43,25 +47,24 @@ class AsusService:
 
     def set_throttle_thermal_policy(self, policy: ThrottleThermalPolicy):
         try:
-            print(f"Setting profile:")
-            print(f"    Throttle policy: {policy.name}")
+            self.logger.info(f"Setting profile:")
+            self.logger.info(f"    Throttle policy: {policy.name}")
             self.platform.throttle_thermal_policy = policy.value
 
-            print(f"          Fan curve: {policy.name}")
+            self.logger.info(f"          Fan curve: {policy.name}")
             self.fan_curves.set_curves_to_defaults(policy)
             self.fan_curves.reset_profile_curves(policy)
             self.fan_curves.set_fan_curves_enabled(policy, True)
             
             power_policy = policy_profile_asoc[policy]
-            print(f"       Power policy: {power_policy.name}")
+            self.logger.info(f"       Power policy: {power_policy.name}")
             self.power.active_profile = power_policy
             
-            print("Profile setted succesfully")
+            self.logger.info("Profile setted succesfully")
             NotificacionInterface().send_notification("Performance profile", f"Setted {policy.name.capitalize()} profile")
 
-            asustray_file_path = os.path.expanduser("~/.asustray")
-            with open(asustray_file_path, "w") as f:
+            with open(LAST_PROFILE, "w") as f:
                 f.write(f"{policy.name}\n")
 
         except Exception as e:
-            print(f"Error al establecer ThrottleThermalPolicy: {e}")
+            self.logger.info(f"Error al establecer ThrottleThermalPolicy: {e}")
