@@ -1,7 +1,5 @@
 import dbus
 import dbus.service
-import functools
-from py_modules.utils.logger import Logger
 from py_modules.utils.tray_icon import TrayIcon
 
 class DbusImplementation(dbus.service.Object):

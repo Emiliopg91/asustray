@@ -10,6 +10,7 @@ class CustomFormatter(logging.Formatter):
     
 @bean
 class Logger:
+
     def __init__(self, name='asustray'):
         # Configurar el logger
         self.logger = logging.getLogger(name)
@@ -28,23 +29,28 @@ class Logger:
         file_handler.setFormatter(formatter)
         self.logger.addHandler(file_handler)
 
+        self.tabs = 0
+
+    def add_tab(self):
+        self.tabs=self.tabs + 1
+
+    def rem_tab(self):
+        self.tabs=max(self.tabs - 1, 0)
+
+    def tab_message(self, message:str):
+        return ('\t' * self.tabs) + message
+    
     def debug(self, message):
-        self.logger.debug(message)
+        self.logger.debug(self.tab_message(message))
 
     def info(self, message):
-        self.logger.info(message)
+        self.logger.info(self.tab_message(message))
 
     def warning(self, message):
-        self.logger.warning(message)
+        self.logger.warning(self.tab_message(message))
 
     def error(self, message):
-        self.logger.error(message)
+        self.logger.error(self.tab_message(message))
 
     def critical(self, message):
-        self.logger.critical(message)
-
-# Ejemplo de uso
-if __name__ == "__main__":
-    log = Logger()
-    log.info("Este es un mensaje de información.")
-    log.error("Este es un mensaje de error.")
+        self.logger.critical(self.tab_message(message))
