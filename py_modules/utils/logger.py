@@ -1,5 +1,4 @@
 import logging
-import os
 from py_modules.utils.constants import LOG_FILE
 from py_modules.utils.di import bean
 
@@ -10,6 +9,7 @@ class CustomFormatter(logging.Formatter):
     
 @bean
 class Logger:
+    tabs = 0
 
     def __init__(self, name='asustray'):
         # Configurar el logger
@@ -29,16 +29,15 @@ class Logger:
         file_handler.setFormatter(formatter)
         self.logger.addHandler(file_handler)
 
-        self.tabs = 0
 
     def add_tab(self):
-        self.tabs=self.tabs + 1
+        Logger.tabs=Logger.tabs + 1
 
     def rem_tab(self):
-        self.tabs=max(self.tabs - 1, 0)
+        Logger.tabs=max(Logger.tabs - 1, 0)
 
     def tab_message(self, message:str):
-        return ('\t' * self.tabs) + message
+        return ('  ' * Logger.tabs) + message
     
     def debug(self, message):
         self.logger.debug(self.tab_message(message))

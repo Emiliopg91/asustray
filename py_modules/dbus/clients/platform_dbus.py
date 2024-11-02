@@ -1,6 +1,7 @@
 import dbus
 from typing import List, Any
 from py_modules.utils.di import bean
+from py_modules.models.platform_models import ThrottleThermalPolicy
 
 @bean
 class PlatformClient:
@@ -29,12 +30,12 @@ class PlatformClient:
 
     # Propiedades
     @property
-    def throttle_thermal_policy(self) -> int:
-        return self.get_property("ThrottleThermalPolicy")
+    def throttle_thermal_policy(self) -> ThrottleThermalPolicy:
+        return ThrottleThermalPolicy.from_value(self.get_property("ThrottleThermalPolicy"))
 
     @throttle_thermal_policy.setter
-    def throttle_thermal_policy(self, value: int):
-        self.set_property("ThrottleThermalPolicy", dbus.UInt32(value))
+    def throttle_thermal_policy(self, mode: ThrottleThermalPolicy):
+        self.set_property("ThrottleThermalPolicy", dbus.UInt32(mode.value))
         
     """
     @property
@@ -71,7 +72,7 @@ class PlatformClient:
     @property
     def dgpu_disable(self) -> bool:
         return self.get_property("DgpuDisable")
-
+        
     @property
     def egpu_enable(self) -> bool:
         return self.get_property("EgpuEnable")

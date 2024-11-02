@@ -1,10 +1,12 @@
 import dbus
 from typing import List, Optional, Any
 from py_modules.utils.di import bean
+from dbus.mainloop.glib import DBusGMainLoop
 
 @bean
 class NotificationsClient:
     def __init__(self):
+        DBusGMainLoop(set_as_default=True)
         self.bus = dbus.SessionBus()
         self.service_name = "org.freedesktop.Notifications"
         self.object_path = "/org/freedesktop/Notifications"

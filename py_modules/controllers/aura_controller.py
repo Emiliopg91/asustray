@@ -1,38 +1,40 @@
-from py_modules.services.asus_service import AsusService
-from py_modules.models.aura_level import AuraLevel
-from py_modules.models.aura_mode import AuraMode
+from py_modules.services.aura_service import AuraService
+from py_modules.models.aura_models import AuraLevel, AuraMode
 from py_modules.utils.on_widget_active_strict import on_widget_active_strict
-from py_modules.utils.di import inject
+from py_modules.utils.di import bean, inject
+from py_modules.utils.logger import Logger
 
 import gi
 gi.require_version("Gtk", "3.0")
 gi.require_version("AppIndicator3", "0.1")
 from gi.repository import Gtk
 
+@bean
 @inject
 class AuraController():
-    asus_service: AsusService
+    inj_aura_service: AuraService
+    inj_logger: Logger
     menu_items_mode = [] 
     menu_items_level = [] 
     last_active_mode = None
     
     @property
     def active_mode(self):
-        return self.asus_service.get_aura_mode()
+        return self.inj_aura_service.get_aura_mode()
 
     @on_widget_active_strict
     def on_mode_activation(self, widget: Gtk.MenuItem):
         mode = AuraMode[widget.get_label().replace(" ", "_").upper()]
-        self.asus_service.set_aura_mode(mode)
+        self.inj_aura_service.set_aura_mode(mode)
     
     @property
     def active_level(self):
-        return self.asus_service.get_aura_level()
+        return self.inj_aura_service.get_aura_level()
 
     @on_widget_active_strict
     def on_level_activation(self, widget: Gtk.MenuItem):
         level = AuraLevel[widget.get_label().upper()]
-        self.asus_service.set_aura_level(level)
+        self.inj_aura_service.set_aura_level(level)
 
     def attach(self, menu: Gtk.Menu) -> None:
         title = Gtk.MenuItem.new_with_label("AuraSync")
@@ -72,5 +74,40 @@ class AuraController():
 
         menu.append(Gtk.SeparatorMenuItem())
 
-    
-    
+    def set_next_aura_level(self):
+        currentLevel = self.inj_aura_service.get_aura_level()
+        nextLevel = self.active_level.getNext()
+        nextLevelTxt = nextLevel.name.capitalize()
+
+        if(nextLevel == currentLevel):
+            self.inj_logger.info(f"Aura level already set at {nextLevelTxt}")
+        else:
+            for item in self.menu_items_level:
+                if(item.get_label() == nextLevelTxt):
+                    item.set_active(True)
+
+        return nextLevelTxt
+
+    def set_previous_aura_level(self):
+        currentLevel = self.inj_aura_service.get_aura_level()
+        nextLevel = self.active_level.getPrevious()
+        nextLevelTxt = nextLevel.name.capitalize()
+
+        if(nextLevel == currentLevel):
+            self.inj_logger.info(f"Aura level already set at {nextLevelTxt}")
+        else:
+            for item in self.menu_items_level:
+                if(item.get_label() == nextLevelTxt):
+                    item.set_active(True)
+
+        return nextLevelTxt
+
+    def set_next_aura_mode(self):
+        nextMode = self.active_mode.getNext()
+        nextModeTxt = nextMode.name.capitalize().replace("_", " ")
+
+        for item in self.menu_items_mode:
+            if(item.get_label() == nextModeTxt):
+                item.set_active(True)
+
+        return nextModeTxt

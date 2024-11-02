@@ -1,5 +1,5 @@
 import dbus
-from py_modules.models.power_profile import PowerProfile
+from py_modules.models.power_models import PowerProfile
 from py_modules.utils.di import bean
 
 @bean

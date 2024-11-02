@@ -20,3 +20,11 @@ class ThrottleThermalPolicy(Enum):
             if policy.name == policy_name:
                 return policy
         raise ValueError(f"Policy '{policy_name}' no es válida.")
+    
+    @classmethod
+    def from_value(cls, value: str):
+        """Devuelve la entrada del enumerado que corresponde al valor dado."""
+        for profile in cls:
+            if profile.value == value:
+                return profile
+        raise ValueError(f"No se encontró un nivel para el valor '{value}'")

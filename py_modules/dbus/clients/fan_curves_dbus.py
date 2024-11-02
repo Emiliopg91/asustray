@@ -1,6 +1,6 @@
 import dbus
-from typing import List, Tuple, Any
-from py_modules.models.throttle_thermal_policy import ThrottleThermalPolicy
+from typing import Tuple
+from py_modules.models.platform_models import ThrottleThermalPolicy
 from py_modules.utils.di import bean
 
 class FanCurveData:

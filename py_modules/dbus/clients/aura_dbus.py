@@ -1,8 +1,7 @@
 import dbus
 import re
 import subprocess
-from py_modules.models.aura_level import AuraLevel
-from py_modules.models.aura_mode import AuraMode
+from py_modules.models.aura_models import AuraLevel, AuraMode
 from py_modules.utils.di import bean
 
 @bean

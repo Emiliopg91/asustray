@@ -1,7 +1,4 @@
-from typing import List, Tuple, Any
-from py_modules.utils.di import bean
 from enum import IntEnum
-import dbus
 
 class GpuMode(IntEnum):
     Hybrid = 0
@@ -26,15 +23,3 @@ class GfxPower(IntEnum):
     AsusDisabled = 3
     AsusMuxDiscreet = 4
     Unknown = 5
-
-# Ejemplo de uso
-client = SuperGfxClient()
-print("Versión:", client.version)
-print("Modo actual:", client.mode.name)
-print("Modos soportados:", client.supported)
-print("Proveedor:", client.vendor)
-print("Estado:", client.power.name)
-print("Acción pendiente del usuario:", client.pending_user_action.name)
-
-client.mode=GpuMode.Hybrid
-print(client.pending_mode.name, "->", client.pending_user_action.name)
